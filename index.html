@@ -4,16 +4,37 @@
   <meta charset="UTF-8" />
   <title>Snap CameraKit Production Test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body { font-family: sans-serif; text-align: center; margin: 20px; }
+    video { width: 100%; max-width: 400px; border: 1px solid #ccc; border-radius: 10px; }
+    select { margin: 10px; padding: 5px; }
+  </style>
 </head>
 <body>
 
-<h1>Snap Production Camera Test</h1>
-<video id="video" autoplay muted playsinline style="width: 100%; max-width: 400px;"></video>
+<h1>Snap CameraKit Production Test</h1>
+
+<video id="video" autoplay muted playsinline></video>
+
+<p>
+  <label for="lensSelect">Choose a Lens:</label>
+  <select id="lensSelect">
+    <option value="c51cc7b3-6ef9-4d01-9452-a49bcc483388">Shadow Switch</option>
+    <option value="619726bf-0d1a-499f-a190-2b635682975a">Blush Parade</option>
+    <option value="abf4498d-dde9-4960-82f6-125b240b66ba">Lipstick Parade</option>
+    <option value="f9ed1ce6-5551-4376-81ce-34ab7bdfd0c5">Look2</option>
+    <option value="ef7d6d68-b1cd-4df6-a91f-4368bf7ced6a">Sunshine Look</option>
+  </select>
+  <button id="applyLens">Apply Lens</button>
+</p>
 
 <!-- Snap SDK -->
 <script src="https://sdk.snapkit.com/js/v1/snapkit.js" onload="initCameraKit()"></script>
 
 <script>
+let cameraKit;
+let session;
+
 async function initCameraKit() {
   try {
     if (typeof Snap === "undefined") {
@@ -22,11 +43,10 @@ async function initCameraKit() {
     }
 
     const CLIENT_ID = "60983cda-12ef-44bc-ba72-a16d0e7839bd"; // PRODUCTION
-
     console.log("Origin:", location.origin);
     console.log("Using PRODUCTION Client ID");
 
-    const cameraKit = await Snap.CameraKit.create({ apiToken: CLIENT_ID });
+    cameraKit = await Snap.CameraKit.create({ apiToken: CLIENT_ID });
     console.log("CameraKit object created:", cameraKit);
 
     // Start webcam
@@ -37,7 +57,7 @@ async function initCameraKit() {
 
     await cameraKit.setSource(video);
 
-    const session = await cameraKit.createSession();
+    session = await cameraKit.createSession();
     await session.start();
     console.log("CameraKit session started ✔");
 
@@ -46,9 +66,23 @@ async function initCameraKit() {
     alert("Check console for errors");
   }
 }
+
+// Apply Lens
+document.getElementById("applyLens").addEventListener("click", async () => {
+  if (!session) {
+    alert("CameraKit session not started yet!");
+    return;
+  }
+  const lensId = document.getElementById("lensSelect").value;
+  try {
+    await session.loadLens({ lensId });
+    console.log("Lens applied:", lensId);
+  } catch (err) {
+    console.error("Failed to apply lens:", err);
+  }
+});
 </script>
 
 </body>
 </html>
-
 
