@@ -1,13 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Smart Mirror – Virtual Makeup</title>
+  <meta charset="UTF-8">
+  <title>Virtual Makeup Mirror</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Camera Kit SDK -->
+  <script src="https://sdk.snapkit.com/js/v1/camera.js"></script>
 </head>
 <body>
-  <h2>Smart Mirror – Virtual Makeup Try-On</h2>
-  <video id="camera" autoplay muted playsinline></video>
+  <h1>Virtual Makeup Mirror</h1>
+  
+  <!-- Camera container -->
+  <div id="snap-camera" style="width:100%; max-width:600px; margin:auto;"></div>
 
-  <script type="module" src="./main.js"></script>
+  <script>
+    // Initialize Snap Camera Kit
+    SnapKit.Camera.init({
+      clientId: "60983cda-12ef-44bc-ba72-a16d0e7839bd", // Your Production Public OAuth Client ID
+      containerId: "snap-camera",
+      filters: ["lens-id-or-url"], // Replace with your Lens Studio lens
+      redirectURI: "https://mayaaahazem.github.io"
+    });
+  </script>
 </body>
 </html>
+
+
