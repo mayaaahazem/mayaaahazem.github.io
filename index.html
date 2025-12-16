@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <title>Virtual Makeup Mirror</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Snap Camera Kit SDK -->
-    <script src="https://sdk.snapkit.com/js/v1/camera.js"></script>
     <style>
         body {
             margin: 0;
@@ -19,15 +17,22 @@
             margin: 20px 0;
             color: #ff69b4;
         }
-        #snap-camera {
+        #mirror-container {
             width: 100%;
             max-width: 640px;
-            height: 480px;
-            background: #000;
+            position: relative;
+        }
+        video {
+            width: 100%;
+            height: auto;
             border-radius: 10px;
+            background: #000;
         }
         .buttons {
             margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
         }
         .buttons button {
             margin: 5px;
@@ -47,7 +52,9 @@
 </head>
 <body>
     <h1>Virtual Makeup Mirror</h1>
-    <div id="snap-camera"></div>
+    <div id="mirror-container">
+        <video id="webcam" autoplay playsinline></video>
+    </div>
 
     <div class="buttons">
         <button onclick="switchLens('sunshine')">Sunshine Look</button>
@@ -60,43 +67,41 @@
     </div>
 
     <script>
-        // Lens IDs from Lens Studio (UUIDs)
-        const lensIDs = {
-            sunshine: "ef7d6d68-b1cd-4df6-a91f-4368bf7ced6a",
-            glam: "d8a546d3-2d1a-48cb-94e7-f9f301fa0f79",
-            eyeliner: "8d137e83-f861-4e83-a2f9-952e434a5867",
-            shadow: "c51cc7b3-6ef9-4d01-9452-a49bcc483388",
-            blush: "619726bf-0d1a-499f-a190-2b635682975a",
-            lipstick: "abf4498e-dde9-4960-82f6-125b240b66ba",
-            look2: "f9ed1ce6-5551-4376-81ce-34ab7bdfd0c5"
+        const video = document.getElementById('webcam');
+
+        async function initCamera() {
+            try {
+                // Request the default webcam or Snap Camera virtual webcam
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: false
+                });
+                video.srcObject = stream;
+            } catch (err) {
+                alert('Camera not accessible. Make sure it is connected and allowed in browser settings.');
+                console.error(err);
+            }
+        }
+
+        // Initialize camera on page load
+        initCamera();
+
+        // Lens placeholders (you can replace this with actual Snap Camera lenses applied via virtual webcam)
+        const lenses = {
+            sunshine: 'Sunshine Look',
+            glam: 'Hot Pink Glam',
+            eyeliner: 'Eyeliner Switch',
+            shadow: 'Shadow Switch',
+            blush: 'Blush Parade',
+            lipstick: 'Lipstick Parade',
+            look2: 'Look 2'
         };
 
-        const clientId = "60983cda-12ef-44bc-ba72-a16d0e7839bd"; // Production Public OAuth Client ID
-        const containerId = "snap-camera"; // ID of the div where Camera Kit renders
-
-        // Initialize Camera Kit with default lens
-        SnapKit.Camera.init({
-            clientId: clientId,
-            containerId: containerId,
-            filters: [lensIDs.sunshine], // Default lens
-            redirectURI: "https://mayaaahazem.github.io"
-        });
-
-        // Switch lenses
-        function switchLens(name) {
-            // Destroy previous camera session
-            SnapKit.Camera.destroy();
-
-            // Initialize Camera Kit with new lens
-            SnapKit.Camera.init({
-                clientId: clientId,
-                containerId: containerId,
-                filters: [lensIDs[name]],
-                redirectURI: "https://mayaaahazem.github.io"
-            });
+        function switchLens(lensName) {
+            // Currently, with Snap Camera virtual webcam, switching lenses is done inside the Snap Camera app
+            alert(`Switch to lens: ${lenses[lensName]} in your Snap Camera app`);
         }
     </script>
 </body>
 </html>
-
 
